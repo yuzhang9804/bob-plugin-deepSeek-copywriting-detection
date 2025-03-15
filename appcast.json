@@ -1,4 +1,12 @@
 {
   "identifier": "yuzhang.deepseek.copywriting-detection",
-  "versions": []
+  "versions": [
+    {
+      "version": "0.0.1",
+      "desc": "重命名插件为 \"DeepSeek Copywriting Detection\"，更新 appcast.json、package.json、README.md 和 updateAppcast.mjs 文件以反映新名称和功能。",
+      "sha256": "5e876c23f49fbc6ac143bf878a9b7aacc0ca83abb9bd613e969c3f2f818f0881",
+      "url": "https://github.com/yuzhang9804/bob-plugin-deepseek-copywriting-detection/releases/download/v0.0.1/deepseek-copywriting-detection-0.0.1.bobplugin",
+      "minBobVersion": "0.5.0"
+    }
+  ]
 }
