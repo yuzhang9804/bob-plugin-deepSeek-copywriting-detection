@@ -13,7 +13,7 @@ const oldVersion = info.version
 console.log(`Old version is ${oldVersion}`)
 
 function updateAppcast(version, desc) {
-  const releaseFile = path.join(__dirname, '../release', `deepseek-translator-${version}.bobplugin`)
+  const releaseFile = path.join(__dirname, '../release', `deepseek-copywriting-detection-${version}.bobplugin`)
   if (!fs.existsSync(releaseFile)) {
     throw new Error('Release file not exist')
   }
@@ -25,7 +25,7 @@ function updateAppcast(version, desc) {
     version: version,
     desc: desc,
     sha256: fileHash,
-    url: `https://github.com/yuzhang9804/bob-plugin-deepSeek-copywriting-detection/releases/download/v${version}/${path.basename(releaseFile)}`,
+    url: `https://github.com/yuzhang9804/bob-plugin-deepseek-copywriting-detection/releases/download/v${version}/${path.basename(releaseFile)}`,
     minBobVersion: '0.5.0',
   }
 
@@ -35,7 +35,7 @@ function updateAppcast(version, desc) {
   if (fs.existsSync(appcastFile)) {
     appcast = JSON.parse(fs.readFileSync(appcastFile, 'utf8'))
   } else {
-    appcast = { identifier: 'yuzhang.deepseek.translator', versions: [] }
+    appcast = { identifier: 'yuzhang.deepseek.copywriting-detection', versions: [] }
   }
 
   appcast.versions.unshift(versionInfo)

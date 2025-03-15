@@ -1,5 +1,5 @@
 <div>
-  <h1 align="center">DeepSeek Translator Bob Plugin</h1>
+  <h1 align="center">DeepSeek Copywriting Detection Bob Plugin</h1>
   <p align="center">
     <a href="https://github.com/yuzhang9804/bob-plugin-deepSeek-translator/releases" target="_blank">
         <img src="https://github.com/yuzhang9804/bob-plugin-deepSeek-translator/actions/workflows/release.yaml/badge.svg" alt="release">
@@ -18,7 +18,7 @@
 
 ## 简介
 
-基于深度求索（DeepSeek）的 API 实现的 Bob 翻译插件。
+基于深度求索（DeepSeek）的 API 实现的 Bob 语法检查插件
 
 ## 使用方法
 
