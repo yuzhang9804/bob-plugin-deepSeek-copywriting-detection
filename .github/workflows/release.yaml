@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags: [v\d+\.\d+\.\d+]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Get version
+        id: get_version
+        uses: battila7/get-version-action@v2
+
+      - name: Get tag message
+        id: tag
+        run: |
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+          echo "message=$(git tag -l --format='%(contents:subject)' ${{ steps.get_version.outputs.version }})" >> $GITHUB_OUTPUT
+
+      - name: Get old version
+        run: |
+          OLD_VERSION=$(grep '"version":' public/info.json | awk -F\" '{print $4}')
+          echo "Old version is $OLD_VERSION"
+
+      - name: Change version
+        run: |
+          OLD_VERSION=$(grep '"version":' public/info.json | awk -F\" '{print $4}')
+          sed -i "s/${OLD_VERSION}/${{ steps.get_version.outputs.version-without-v }}/" public/info.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Package plugin
+        run: mkdir -p release && zip -j -r release/deepseek-translator-${{ steps.get_version.outputs.version-without-v }}.bobplugin ./dist/*
+
+      - run: git checkout -- src/
+
+      - name: Update appcast.json
+        run: |
+          node scripts/updateAppcast.mjs ${{ steps.get_version.outputs.version-without-v }} '${{ steps.tag.outputs.message }}'
+
+      - name: Commit changes to community branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        run: |
+          git config --global user.name 'yuzhang9804'
+          git config --global user.email 'yuzhang9804@gmail.com'
+          git fetch origin main
+          git checkout -b main origin/main
+          git add appcast.json
+          git commit -m 'chore: update appcast.json'
+          git push https://yuzhang9804:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/yuzhang9804/bob-plugin-deepSeek-translator.git HEAD:community
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          release_name: ${{ steps.get_version.outputs.version }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: release/deepseek-translator-${{ steps.get_version.outputs.version-without-v }}.bobplugin
+          asset_name: deepseek-translator-${{ steps.get_version.outputs.version-without-v }}.bobplugin
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: ${{ steps.tag.outputs.message }}
