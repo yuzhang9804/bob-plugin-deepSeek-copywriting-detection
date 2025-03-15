@@ -1,13 +1,13 @@
 {
-  "identifier": "yuzhang.deepseek.translator",
+  "identifier": "yuzhang.deepseek.copywriting-detection",
   "version": "0.0.1",
   "category": "translate",
-  "name": "DeepSeek Translator",
-  "summary": "GPT powered translator",
+  "name": "DeepSeek Copywriting Detection",
+  "summary": "DeepSeek powered copywriting detection",
   "icon": "",
   "author": "yuzhang9804@gmail.com",
-  "homepage": "https://github.com/deepseek-ai/bob-plugin-deepseek-translator",
-  "appcast": "https://raw.githubusercontent.com/deepseek-ai/bob-plugin-deepseek-translator/main/appcast.json",
+  "homepage": "https://github.com/yuzhang9804/bob-plugin-deepSeek-copywriting-detection",
+  "appcast": "https://raw.githubusercontent.com/yuzhang9804/bob-plugin-deepSeek-copywriting-detection/main/appcast.json",
   "minBobVersion": "0.5.0",
   "options": [
     {

@@ -25,7 +25,7 @@ function updateAppcast(version, desc) {
     version: version,
     desc: desc,
     sha256: fileHash,
-    url: `https://github.com/yuzhang9804/bob-plugin-deepSeek-translator/releases/download/v${version}/${path.basename(releaseFile)}`,
+    url: `https://github.com/yuzhang9804/bob-plugin-deepSeek-copywriting-detection/releases/download/v${version}/${path.basename(releaseFile)}`,
     minBobVersion: '0.5.0',
   }
 

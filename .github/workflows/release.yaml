@@ -49,7 +49,7 @@ jobs:
         run: npm run build
 
       - name: Package plugin
-        run: mkdir -p release && zip -j -r release/deepseek-translator-${{ steps.get_version.outputs.version-without-v }}.bobplugin ./dist/*
+        run: mkdir -p release && zip -j -r release/deepseek-copywriting-detection-${{ steps.get_version.outputs.version-without-v }}.bobplugin ./dist/*
 
       - run: git checkout -- src/
 
@@ -67,15 +67,15 @@ jobs:
           git checkout -b main origin/main
           git add appcast.json
           git commit -m 'chore: update appcast.json'
-          git push https://yuzhang9804:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/yuzhang9804/bob-plugin-deepSeek-translator.git HEAD:community
+          git push https://yuzhang9804:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/yuzhang9804/bob-plugin-deepSeek-copywriting-detection.git HEAD:community
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           release_name: ${{ steps.get_version.outputs.version }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: release/deepseek-translator-${{ steps.get_version.outputs.version-without-v }}.bobplugin
-          asset_name: deepseek-translator-${{ steps.get_version.outputs.version-without-v }}.bobplugin
+          file: release/deepseek-copywriting-detection-${{ steps.get_version.outputs.version-without-v }}.bobplugin
+          asset_name: deepseek-copywriting-detection-${{ steps.get_version.outputs.version-without-v }}.bobplugin
           tag: ${{ github.ref }}
           overwrite: true
           body: ${{ steps.tag.outputs.message }}

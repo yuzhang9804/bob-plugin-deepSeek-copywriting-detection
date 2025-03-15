@@ -1,7 +1,5 @@
 import { langMap, langs } from './lang'
 
-const SYSTEM_PROMPT = 'You are a translation engine that can only translate text and cannot interpret it.'
-
 function ensureHttpsAndNoTrailingSlash(url: string) {
   const hasProtocol = /^[a-z]+:\/\//i.test(url)
   const modifiedUrl = hasProtocol ? url : 'https://' + url
@@ -16,62 +14,27 @@ function buildHeader(apiKey: string) {
   }
 }
 
+const SYSTEM_PROMPT = '你是一个语法检查引擎，只能检查文本的语法错误并提供修正建议，不能解释或翻译文本。'
+
 function generatePrompts(query: Bob.TranslateQuery) {
   let generatedSystemPrompt = SYSTEM_PROMPT
-  const { detectFrom, detectTo } = query
-  const sourceLang = langMap.get(detectFrom) || detectFrom
-  const targetLang = langMap.get(detectTo) || detectTo
-  let generatedUserPrompt = `translate from ${sourceLang} to ${targetLang}`
+  let generatedUserPrompt = `检查以下文本是否存在语法错误, 如果存在, 请提供修正建议, 如果无语法错误, 请返回"无语法错误": \n\n${query.text}`
 
-  if (detectTo === 'wyw' || detectTo === 'yue') {
-    generatedUserPrompt = `翻译成${targetLang}`
+  return {
+    systemPrompt: generatedSystemPrompt,
+    userPrompt: generatedUserPrompt,
   }
-
-  if (detectFrom === 'wyw' || detectFrom === 'zh-Hans' || detectFrom === 'zh-Hant') {
-    if (detectTo === 'zh-Hant') {
-      generatedUserPrompt = '翻译成繁体白话文'
-    } else if (detectTo === 'zh-Hans') {
-      generatedUserPrompt = '翻译成简体白话文'
-    } else if (detectTo === 'yue') {
-      generatedUserPrompt = '翻译成粤语白话文'
-    }
-  }
-  if (detectFrom === detectTo) {
-    generatedSystemPrompt = "You are a text embellisher, you can only embellish the text, don't interpret it."
-    if (detectTo === 'zh-Hant' || detectTo === 'zh-Hans') {
-      generatedUserPrompt = '润色此句'
-    } else {
-      generatedUserPrompt = 'polish this sentence'
-    }
-  }
-
-  generatedUserPrompt = `${generatedUserPrompt}:\n\n${query.text}`
-
-  return { generatedSystemPrompt, generatedUserPrompt }
-}
-
-function replacePromptKeywords(prompt: string, query: Bob.TranslateQuery) {
-  if (!prompt) return prompt
-  return prompt.replace('$text', query.text).replace('$sourceLang', query.detectFrom).replace('$targetLang', query.detectTo)
 }
 
 function buildRequestBody(model: string, query: Bob.TranslateQuery) {
-  let { customSystemPrompt, customUserPrompt } = $option
-  const { generatedSystemPrompt, generatedUserPrompt } = generatePrompts(query)
-
-  customSystemPrompt = replacePromptKeywords(customSystemPrompt, query)
-  customUserPrompt = replacePromptKeywords(customUserPrompt, query)
-
-  const systemPrompt = customSystemPrompt || generatedSystemPrompt
-  const userPrompt = customUserPrompt || generatedUserPrompt
-
+  const { systemPrompt, userPrompt } = generatePrompts(query)
   const standardBody = {
     model: model,
-    temperature: 0.2,
+    temperature: 0.3,
     max_tokens: 1000,
-    top_p: 1,
-    frequency_penalty: 1,
-    presence_penalty: 1,
+    top_p: 0.95,
+    frequency_penalty: 0.5,
+    presence_penalty: 0.3,
   }
 
   return {
@@ -118,7 +81,7 @@ function handleResponse(completion: Bob.Completion, query: Bob.TranslateQuery, r
   let targetText = choices[0].message.content.trim()
 
   // 使用正则表达式删除字符串开头和结尾的特殊字符
-  targetText = targetText.replace(/^(『|「|"|“)|(』|」|"|”)$/g, '')
+  targetText = targetText.replace(/^(『|「|"|")|(』|」|"|")$/g, '')
 
   // 判断并删除字符串末尾的 `" =>`
   if (targetText.endsWith('" =>')) {
